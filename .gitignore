@@ -1,4 +1,9 @@
 node_modules
+uploads
+
 package-lock.json
 yarn.lock
 yarn-error.lock
+
+.env.production
+.env.development
