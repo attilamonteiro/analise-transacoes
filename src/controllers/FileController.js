@@ -6,21 +6,16 @@ exports.sendIndex = async (req, res) => {
 };
 
 exports.uploadFile = async (req, res) => {
-  const archiveName = `uploads/${req.file.filename}`; // rota do arquivo recebendo o nome dele.
+  const archiveName = `uploads/${req.file.filename}`;
 
-  fs.access(archiveName, fs.constants.F_OK, (err) => {
-    if (err) {
-      res.send(
-        "Arquivo não encontrado. Ocorreu um erro desconhecido no upload!"
-      );
-    } else {
-      const lines = [];
-      fs.createReadStream(archiveName) // Busca o arquivo na pasta uploads
-        .pipe(csv()) // utiliza o csv-parse
-        .on("data", (line) => lines.push(line)) // realiza a leitura de cada linha do csv
-        .on("end", () => {
-          res.send(lines); // Envia para o front end um array contendo os dados do csv
-        });
-    }
-  });
+  const lines = [];
+  fs.createReadStream(archiveName)
+    .pipe(csv())
+    .on("data", (line) => lines.push(line))
+    .on("end", () => {
+      res.send(lines);
+    })
+    .on("error", (err) => {
+      res.send("Ocorreu um erro desconhecido no upload!");
+    });
 };
