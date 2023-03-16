@@ -1,3 +1,5 @@
 const app = require("./src/config/express");
 
-app.listen(process.env.PORT || 3000, () => console.log("Servidor rodando!"));
+const db = require("./src/config/db");
+
+app.listen(process.env.PORT || 3001, () => console.log("Servidor rodando!"));
