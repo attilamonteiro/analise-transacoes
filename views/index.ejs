@@ -1,13 +1,16 @@
+<!-- Cabeçalho da página -->
 <!DOCTYPE html>
 <html>
   <head>
     <title>Minha aplicação EJS</title>
+    <!-- Link para o CSS do Bootstrap -->
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
       rel="stylesheet"
       integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD"
       crossorigin="anonymous"
     />
+    <!-- Link para o JavaScript do Bootstrap -->
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
       integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
@@ -15,19 +18,23 @@
     ></script>
   </head>
   <body>
+    <!-- Seção para importar transações -->
     <div class="importar">
       <div class="title">
         <h2>Importar Transações</h2>
       </div>
+      <!-- Formulário para enviar o arquivo de transações -->
       <form action="./uploadFile" method="POST" enctype="multipart/form-data">
         <input type="file" name="file" accept="text/csv" />
         <input type="submit" value="upload" />
       </form>
     </div>
+    <!-- Seção para exibir as importações realizadas -->
     <div id="transacoes">
       <div class="title">
         <h2>Importações Realizadas</h2>
       </div>
+      <!-- Tabela para exibir as importações realizadas -->
       <table class="table">
         <thead>
           <tr>
@@ -35,17 +42,19 @@
             <th scope="col">Data da Importacao</th>
           </tr>
         </thead>
-          <tbody id="tableData">
-          </tbody>
-        </table>
-      </div>
+        <tbody id="tableData">
+        </tbody>
+      </table>
     </div>
   </body>
+  <!-- Link para o JavaScript do Axios -->
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <script>
+    // Função assíncrona para obter os registros de importações realizadas
     const getRegistros = async () => {
-      // event.preventDefault();
+      // Realiza uma requisição GET para a rota '/registros'
       const { data } = await axios.get('/registros');
+      // Inverte a ordem dos registros e insere cada um deles na tabela
       data.reverse().forEach(element => {
         document.getElementById('tableData').innerHTML += `
         <tr>
@@ -55,7 +64,7 @@
         `   
       });
     };
+    // Chama a função getRegistros para exibir as importações realizadas na tabela
     getRegistros()
   </script>
-  
 </html>
