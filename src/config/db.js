@@ -16,6 +16,11 @@ const sequelize = new Sequelize(
   }
 );
 
+// Verifica se as variáveis de ambiente foram definidas corretamente antes de criar a conexão
+if (!process.env.DB_USER || !process.env.DB_PASSWORD || !process.env.DB_DATABASE || !process.env.DB_HOST || !process.env.DB_PORT || !process.env.DB_DIALECT) {
+  console.error('Alguma variável de ambiente está faltando ou definida incorretamente.');
+  process.exit(1);
+}
 // Tenta autenticar a conexão com o banco de dados
 sequelize
   .authenticate()
