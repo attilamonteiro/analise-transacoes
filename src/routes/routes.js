@@ -1,9 +1,9 @@
-const FileController = require("./../controllers/FileController");
+const FileController = require("../controllers/FileController");
 
 const upload = require("./../config/multer");
 
 module.exports = (app) => {
   app.get("/", FileController.sendIndex);
-  app.post("/get", FileController.get);
-  app.post("/upload", upload.single("file"), FileController.uploadFile);
+  app.post('/uploadFile', upload.single("file"), FileController.sendFile)
+  app.get('/registros', FileController.getRegistros)
 };

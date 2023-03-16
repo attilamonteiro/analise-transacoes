@@ -19,8 +19,7 @@
       <div class="title">
         <h2>Importar Transações</h2>
       </div>
-      <form onsubmit="send(this)" enctype="multipart/form-data">
-        <input type="text" name="id" />
+      <form action="./uploadFile" method="POST" enctype="multipart/form-data">
         <input type="file" name="file" accept="text/csv" />
         <input type="submit" value="upload" />
       </form>
@@ -44,20 +43,19 @@
   </body>
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <script>
-    const send = (that) => {
-      event.preventDefault();
-      axios.post('/get', {id: that.id.value}).then((response) => {
-        const data = response.data;
-        console.log(response);
-        document.getElementById('tableData').innerHTML += `        
+    const getRegistros = async () => {
+      // event.preventDefault();
+      const { data } = await axios.get('/registros');
+      data.reverse().forEach(element => {
+        document.getElementById('tableData').innerHTML += `
         <tr>
-          <td>${data.dataHoraTransacao}</td>
-          <td>${data.createdAt}</td>
-        </tr>`;
-      }).catch((err) => {
-        console.log(err);
-        alert(err.response.data.msg)
-      })
+            <td>${new Date(element.dataTransacao).toLocaleDateString()}</td>
+            <td>${new Date(element.dataImportacao).toLocaleDateString()} - ${new Date(element.dataImportacao).toLocaleTimeString()}</td>
+          </tr>
+        `   
+      });
     };
+    getRegistros()
   </script>
+  
 </html>
