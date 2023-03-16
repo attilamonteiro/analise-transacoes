@@ -4,9 +4,6 @@ const express = require("express");
 // Importa a biblioteca CORS
 const cors = require("cors");
 
-// Cria uma nova instância do Express
-const app = express();
-
 // Importa as variáveis de ambiente do arquivo correspondente de acordo com o valor da variável NODE_ENV
 const dotenv = require("dotenv");
 dotenv.config({
@@ -16,8 +13,14 @@ dotenv.config({
       : ".env.development",
 });
 
+// Cria uma nova instância do Express
+const app = express();
+
 // Define que o servidor irá aceitar JSON no corpo das requisições
 app.use(express.json())
+
+// Define que o servidor irá aceitar dados codificados em URL nas requisições
+app.use(express.urlencoded({ extended: true }));
 
 // Define a engine de renderização do servidor como o EJS
 app.set("view engine", "ejs");
@@ -25,8 +28,7 @@ app.set("view engine", "ejs");
 // Define a pasta onde os arquivos estáticos do front-end estão localizados
 app.use(express.static("public"));
 
-// Define que o servidor irá aceitar dados codificados em URL nas requisições
-app.use(express.urlencoded({ extended: true }));
+
 
 // Define que o servidor irá aceitar requisições de outros domínios (cross-origin resource sharing)
 app.use(cors());

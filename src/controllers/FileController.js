@@ -1,6 +1,7 @@
 const fs = require("fs"); // módulo para trabalhar com arquivos
 const csv = require("csv-parse"); // módulo para fazer parsing de arquivos CSV
 const Registro = require('../models/Registro') // modelo de dados para registros
+const Transacao = require('../models/Transacao');
 
 exports.sendIndex = async (req, res) => {
   res.render("index"); // renderiza a página inicial
