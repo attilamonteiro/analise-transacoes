@@ -33,4 +33,3 @@ sequelize
   });
 
 // Exporta a instância do Sequelize para que possa ser utilizada em outros módulos
-module.exports = sequelize;
