@@ -7,33 +7,33 @@ const Transacao = sequelize.define("transacao", {
     autoIncrement: true,
     primaryKey: true,
   },
-  bancoOrigem: {
+  bOrigem: {
     type: DataTypes.STRING,
   },
-  agenciaOrigem: {
+  aOrigem: {
     type: DataTypes.STRING,
   },
-  contaOrigem: {
+  cOrigem: {
     type: DataTypes.STRING,
   },
-  bancoDestino: {
+  bDestino: {
     type: DataTypes.STRING,
   },
-  agenciaDestino: {
+  aDestino: {
     type: DataTypes.STRING,
   },
-  contaDestino: {
+  cDestino: {
     type: DataTypes.STRING,
   },
-  valorTransacao: {
+  vTransacao: {
     type: DataTypes.STRING,
   },
   dataHoraTransacao: {
     type: DataTypes.STRING,
   },
   filePath: {
-    type: DataTypes.STRING,
-  },
+    type: DataTypes.STRING
+  }
 });
 // Transacao.sync({force: true});
 Transacao.sync();
