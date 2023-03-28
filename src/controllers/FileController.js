@@ -1,49 +1,79 @@
-const fs = require("fs"); // módulo para trabalhar com arquivos
-const csv = require("csv-parse"); // módulo para fazer parsing de arquivos CSV
-const Registro = require('../models/Registro') // modelo de dados para registros
-const Transacao = require('../models/Transacao');
+const fs = require("fs");
+const csv = require("csv-parse");
+const Registro = require("../models/Registro");
+const Transacao = require("../models/Transacao");
 
 exports.sendIndex = async (req, res) => {
-  res.render("index"); // renderiza a página inicial
+  res.render("index");
 };
 
 exports.getRegistros = async (req, res) => {
-  const listaRegistros = await Registro.findAll(); // busca todos os registros no banco de dados
-  res.send(listaRegistros) // envia a lista de registros em formato JSON
-}
+  const listaRegistros = await Registro.findAll();
+  res.send(listaRegistros);
+};
 
 exports.sendFile = async (req, res) => {
-  console.log(req.file); // loga informações sobre o arquivo enviado pelo usuário
+  console.log(req.file); // primeira tarefa
 
-  const filePath = req.file.path; // caminho do arquivo temporário enviado pelo usuário
-  var results = []; // array vazio para armazenar as transações
+  const filePath = req.file.path;
+  console.log(filePath, typeof(filePath))
+  var results = [];
 
-  fs.createReadStream(filePath) // cria uma stream de leitura para o arquivo
-    .pipe(csv()) // faz parsing do arquivo CSV
-    .on("data", (data) => { // para cada linha do arquivo
+  fs.createReadStream(filePath)
+    .pipe(csv())
+    .on("data", (data) => {
+      // fazer validação se o arquivo tá vazio
+      // verificar se a data do arquivo ja existe no banco
+      // verificar se há alguma linha vazia
       var transacao = {
-        bOrigem: data[0], // campo bOrigem
-        aOrigem: data[1], // campo aOrigem
-        cOrigem: data[2], // campo cOrigem
-        bDestino: data[3], // campo bDestino
-        aDestino: data[4], // campo aDestino
-        cDestino: data[5], // campo cDestino
-        vTransacao: data[6], // campo vTransacao
-        dataHoraTransacao: data[7], // campo dataHoraTransacao
+        bOrigem: data[0],
+        aOrigem: data[1],
+        cOrigem: data[2],
+        bDestino: data[3],
+        aDestino: data[4],
+        cDestino: data[5],
+        vTransacao: data[6],
+        dataHoraTransacao: data[7],
+        filePath: filePath,
       };
-      results.push(transacao); // adiciona a transação ao array de resultados
+
+      results.push(transacao);
     })
     .on("end", () => {
-      // data/hora que a importação foi realizada e data das transações dessa importação.
+      // cria data/hora que a importação foi realizada e data das transações dessa importação.
       var registro = new Registro({
-        dataTransacao: results[0].dataHoraTransacao, // data/hora da primeira transação
-        dataImportacao: new Date().toISOString(), // data/hora da importação
+        dataTransacao: results[0].dataHoraTransacao,
+        dataImportacao: new Date().toISOString(),
+        filePath: filePath,
       });
-      registro.save(); // salva o registro no banco de dados
-      
-      res.render('index') // renderiza a página inicial, atualizando-a com o novo registro
+
+      // verifica se a data da transação ja existe no banco (tarefa 4)
+      // const registroExiste = Registro.findAll({'dataHoraTransacao' : results[0].dataHoraTransacao}) || false 
+      // if (registroExiste) {
+      //   throw new Error('Esta data ja existe no banco')
+      // }
+
+      // gravar cada transação em banco de dados.
+      const dataPrimeiraTransacao = new Date(
+        results[0].dataHoraTransacao
+      ).toLocaleDateString();
+
+      results.forEach((e) => {
+        const dataAtualTransacao = new Date(
+          e.dataHoraTransacao
+        ).toLocaleDateString();
+        if (dataAtualTransacao !== dataPrimeiraTransacao) {
+          return;
+        }
+        var transacao = new Transacao(e);
+
+        transacao.save(); // salva as transacoes no banco
+      });
+      registro.save(); // salva o registro no banco
+
+      res.render("index"); // atualiza a página principal com o novo registro
     })
     .on("error", (err) => {
-      res.send("Ocorreu um erro desconhecido no upload."); // retorna uma mensagem de erro caso ocorra algum problema na importação do arquivo
+      res.send("Ocorreu um erro desconhecido no upload.");
     });
 };
