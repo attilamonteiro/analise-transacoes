@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Lista de usuários</title>
+</head>
+<body>
+    <h1>Lista de usuários</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>E-mail</th>
+                <th>Ação</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% user.forEach(function(user) { %>
+                <tr>
+                    <td><%= user.nome %></td>
+                    <td><%= user.email %></td>
+                    <td>
+                        <form method="POST" action="/user/delete/<%= user.id %>">
+                            <button type="submit">Excluir</button>
+                        </form>
+                        <form method="GET" action="/user/edit/<%= user.id %>">
+                            <button type="submit">Editar</button>
+                        </form>
+                    </td>
+                </tr>
+            <% }); %>
+        </tbody>
+    </table>
+</body>
+</html>

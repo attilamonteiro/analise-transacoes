@@ -4,7 +4,7 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "start": "set NODE_ENV=production&&node index.js",
+    "start": "set NODE_ENV=production&&nodemon index.js",
     "dev": "set NODE_ENV=development&&nodemon --inspect index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/attilamonteiro/analise-transacoes#readme",
   "dependencies": {
+    "bcrypt": "^5.1.0",
     "cors": "^2.8.5",
     "csv-parse": "3.0.0",
     "csv-parser": "^3.0.0",
@@ -26,9 +27,11 @@
     "ejs": "^3.1.8",
     "express": "^4.18.2",
     "json-server": "^0.17.2",
+    "jsonwebtoken": "^9.0.0",
     "moment": "^2.29.4",
     "multer": "^1.4.5-lts.1",
     "mysql2": "^3.2.0",
+    "nodemailer": "^6.9.1",
     "sequelize": "^6.29.1"
   },
   "devDependencies": {

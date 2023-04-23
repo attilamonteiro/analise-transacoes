@@ -18,5 +18,6 @@ const Registro = sequelize.define("registro", {
   }
 });
 
+//Registro.sync({force:true});
 Registro.sync();
 module.exports = Registro;

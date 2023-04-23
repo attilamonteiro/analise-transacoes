@@ -35,6 +35,6 @@ const Transacao = sequelize.define("transacao", {
     type: DataTypes.STRING
   }
 });
-// Transacao.sync({force: true});
+ //Transacao.sync({force: true});
 Transacao.sync();
 module.exports = Transacao;
