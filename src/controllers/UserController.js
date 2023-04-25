@@ -13,32 +13,34 @@ exports.sendCadastro = async (req, res) => {
     res.render("cadastro");
   };
 
+  const createDefaultUser = async () => {
+    try {
+      const saltRounds = 10;
+      const password = '123999';
+      const hashedPassword = await bcrypt.hash(password, saltRounds);
   
-// Cria usuário padrão se não existir
-const saltRounds = 10;
-
-bcrypt.hash('123999', saltRounds, (err, hash) => {
-  if (err) {
-    console.log('Erro ao criptografar a senha:', err);
-  } else {
-    User.findOrCreate({
-      where: { email: 'admin@email.com.br'},
-      defaults: {
-        nome: 'Admin',
-        email: 'admin@email.com.br',
-        senha: hash
-      }
-    }).then(([user, created]) => {
+      const [user, created] = await User.findOrCreate({
+        where: {
+          email: 'admin@email.com.br'
+        },
+        defaults: {
+          nome: 'Admin',
+          email: 'admin@email.com.br',
+          senha: hashedPassword
+        }
+      });
+  
       if (created) {
         console.log('Usuário padrão criado com sucesso!');
       }
-    }).catch(error => {
-      console.log('Erro ao criar usuário padrão:', error);
-    });
-  }
-});
+    } catch (err) {
+      console.error('Erro ao criar usuário padrão:', err);
+    }
+  };
+  createDefaultUser();
 //antigo
-// Cria usuário padrão se não existir User.findOrCreate({ where: { email: 'admin@email.com.br'}, defaults: { nome: 'Admin', email: 'admin@email.com.br', senha: '123999' } }).then(([user, created]) => { if (created) { console.log('Usuário padrão criado com sucesso!'); } }).catch(error => { console.log('Erro ao criar usuário padrão:', error); });
+// Cria usuário padrão se não existir 
+//User.findOrCreate({ where: { email: 'admin@email.com.br'}, defaults: { nome: 'Admin', email: 'admin@email.com.br', senha: '123999' } }).then(([user, created]) => { if (created) { console.log('Usuário padrão criado com sucesso!'); } }).catch(error => { console.log('Erro ao criar usuário padrão:', error); });
 
 // Função para enviar a página com a lista de usuários cadastrados
 exports.sendUserList = async (req, res) => {
@@ -55,59 +57,75 @@ exports.sendUserList = async (req, res) => {
 
 // Função para enviar a página com o formulário de cadastro/edição de usuário
 exports.sendUserForm = async (req, res) => {
-const { id } = req.params;
-if (id) {
-const user = await User.findByPk(id);
-res.render("user/form", { user });
-} else {
-res.render("user/form");
-}
+  try {
+    const { id } = req.params;
+    let user;
+    if (id) {
+      user = await User.findByPk(id);
+      if (!user) {
+        return res.status(404).send({ error: 'Usuário não encontrado.' });
+      }
+    }
+    res.render("user/form", { user });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send({ message: "Ocorreu um erro ao enviar o formulário de usuário." });
+  }
 };
 
 // Função para criar um novo usuário
 exports.createUser = async (req, res) => {
-  const { nome, email } = req.body;
+  try {
+    const { nome, email } = req.body;
 
-  // Verifica se o email já existe no banco de dados
-  const existingUser = await User.findOne({ where: { email } });
-  if (existingUser) {
-    return res.status(400).send({ message: "Este e-mail já está cadastrado." });
+    // Verifica se o email já existe no banco de dados
+    const existingUser = await User.findOne({ where: { email } });
+    if (existingUser) {
+      return res.status(400).send({ message: "Este e-mail já está cadastrado." });
+    }
+
+    // Gera a senha aleatória
+    const password = Math.floor(Math.random() * 900000) + 100000;
+
+    // Criptografa a senha com o algoritmo BCrypt
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(password.toString(), saltRounds);
+
+    // Cria o usuário com as informações fornecidas e a senha criptografada
+    const user = await User.create({ nome, email, senha: hashedPassword });
+
+    // Configura o transporte de e-mail
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: "atmaload@gmail.com",
+        pass: "senha do gmail",
+      },
+    });
+
+    // Configura as opções de e-mail
+    const mailOptions = {
+      from: "atmaload@gmail.com",
+      to: email,
+      subject: "Sua senha de acesso à aplicação",
+      text: `Sua senha é: ${password}`,
+    };
+
+    // Envia o e-mail para o usuário
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.log(error);
+      } else {
+        console.log("Email enviado: " + info.response);
+      }
+    });
+
+    res.redirect("/user");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send({ message: "Ocorreu um erro ao criar o usuário." });
   }
-
-  // Gera a senha aleatória
-  const password = Math.floor(Math.random() * 900000) + 100000;
-
-  // Criptografa a senha com o algoritmo BCrypt
-  const hashedPassword = await bcrypt.hash(password.toString(), 10);
-
-  // Cria o usuário com as informações fornecidas e a senha criptografada
-  const user = await User.create({ nome, email, senha: hashedPassword }); // adicionado "senha" aqui
-
-  // Envia a senha por e-mail para o usuário
-  // const transporter = nodemailer.createTransport({
-  // service: "gmail",
-  // auth: {
-  //   user: 'atmaload@gmail.com',
-  //   pass: "",
-  //   },
-  // });
-  // const mailOptions = {
-  //   from: 'atmaload@gmail.com',
-  //   to: email,
-  //   subject: "Sua senha de acesso à aplicação",
-  //   text: `Sua senha é: ${password}`,
-  // };
-  // transporter.sendMail(mailOptions, (error, info) => {
-  //   if (error) {
-  //     console.log(error);
-  //   } else {
-  //     console.log("Email enviado: " + info.response);
-  //   }
-  // });
-
-  res.redirect("/user");
 };
-
 
 // Função para processar a edição de usuário
 exports.editUser = async (req, res) => {
@@ -124,15 +142,14 @@ exports.editUser = async (req, res) => {
   if (userExists) {
     res.status(400).send({ error: 'Já existe um usuário com este email.' });
   } else {
-    const user = await User.findByPk(id);
+    const [updatedRowsCount] = await User.update(
+      { nome, email },
+      { where: { id } }
+    );
 
-    if (!user) {
+    if (updatedRowsCount === 0) {
       res.status(404).send({ error: 'Usuário não encontrado.' });
     } else {
-      user.nome = nome;
-      user.email = email;
-      await user.save();
-
       res.send({ message: 'Usuário editado com sucesso.' });
     }
   }
@@ -140,19 +157,23 @@ exports.editUser = async (req, res) => {
 
 //Função para excluir um usuário existente
 exports.deleteUser = async (req, res) => {
-const { id } = req.params;
-if (req.user && parseInt(id) === req.user.id) {
-  res.status(400).send({ error: 'Você não pode excluir a si mesmo.' });
-} else {
-const user = await User.findByPk(id);
+  const { id } = req.params;
+  if (parseInt(id) === req.user?.id) {
+    res.status(400).send({ error: 'Você não pode excluir a si mesmo.' });
+  } else {
+    const deletedRowsCount = await User.destroy({
+      where: {
+        id,
+        email: {
+          [Op.ne]: 'admin@email.com.br'
+        }
+      }
+    });
 
-if (!user) {
-res.status(404).send({ error: 'Usuário não encontrado.' });
-} else if (user.email === 'admin@email.com.br') {
-res.status(400).send({ error: 'Este usuário não pode ser excluído.' });
-} else {
-await user.destroy();
-res.send({ message: 'Usuário excluído com sucesso.' });
-}
-}
+    if (deletedRowsCount === 0) {
+      res.status(404).send({ error: 'Usuário não encontrado ou não pode ser excluído.' });
+    } else {
+      res.send({ message: 'Usuário excluído com sucesso.' });
+    }
+  }
 };

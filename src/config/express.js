@@ -3,6 +3,9 @@ const express = require("express");
 
 // Importa a biblioteca CORS
 const cors = require("cors");
+const cookieParser = require('cookie-parser');
+
+
 
 // Importa as variáveis de ambiente do arquivo correspondente de acordo com o valor da variável NODE_ENV
 const dotenv = require("dotenv");
@@ -27,6 +30,9 @@ app.set("view engine", "ejs");
 
 // Define a pasta onde os arquivos estáticos do front-end estão localizados
 app.use(express.static("public"));
+
+
+app.use(cookieParser());
 
 
 
