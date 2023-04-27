@@ -23,7 +23,7 @@ Abra http://localhost:3000 em seu navegador
 
 # Rotas
 / - exibe a página principal do projeto 
-/user - exibe a página de usuário após login  
+/user - exibe a página de usuário
 /login - exibe a página de login  
 /logout - realiza logout do usuário e redireciona para a página de login  
 /cadastro - exibe a página de cadastro de usuário 
