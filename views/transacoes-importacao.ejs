@@ -1,0 +1,31 @@
+<!-- transacoes-importacao.ejs -->
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Transações de Importação</title>
+  </head>
+  <body>
+    <h1>Transações de Importação</h1>
+    <table>
+      <thead>
+        <tr>
+          <th>Data</th>
+          <th>Usuário</th>
+          <th>Valor</th>
+          <th>Descrição</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% transacoes.forEach(function(transacao) { %>
+          <tr>
+            <td><%= transacao.createdAt %></td>
+            <td><%= transacao.user.name %></td>
+            <td><%= transacao.valor %></td>
+            <td><%= transacao.descricao %></td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </body>
+</html>

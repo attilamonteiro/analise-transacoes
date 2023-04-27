@@ -1,6 +1,7 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/db");
 
+
 const Transacao = sequelize.define("transacao", {
   id: {
     type: DataTypes.INTEGER,
@@ -33,8 +34,13 @@ const Transacao = sequelize.define("transacao", {
   },
   filePath: {
     type: DataTypes.STRING
-  }
+  },
+
 });
- //Transacao.sync({force: true});
+
+
+
+
+//Transacao.sync({force: true});
 Transacao.sync();
 module.exports = Transacao;

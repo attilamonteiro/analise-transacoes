@@ -23,7 +23,13 @@ exports.login = async (req, res) => {
 };
 
 exports.logout = async(req, res) => {
+  try{
   //res.cookie('token', " ", { httpOnly: true, secure: true });
   res.clearCookie('token')
-  res.status(200).json({message: 'logout realizado com sucesso!'})
+  // res.status(200).json({message: 'logout realizado com sucesso!'})
+  return res.redirect('/user')
+  } catch (error) {console.log(error.message, error.stack)
+    return res.status(500).json({ error: 'Erro interno do servidor.' });
+  }
+
 }
