@@ -27,7 +27,7 @@ const User = sequelize.define("user", {
   },
   status:{
     type: DataTypes.INTEGER,
-    allowNull: false,
+    allowNull: true,
   }
 });
 
