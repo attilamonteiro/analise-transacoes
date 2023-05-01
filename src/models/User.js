@@ -1,7 +1,7 @@
 const { DataTypes, INTEGER } = require("sequelize");
 const sequelize = require("../config/db");
-const Transacao = require('../models/Transacao');
-const Registro = require("../models/Registro");
+// const Transacao = require('./Transacao');
+// const Registro = require("./Registro");
 
 const User = sequelize.define("user", {
   id: {
@@ -31,12 +31,8 @@ const User = sequelize.define("user", {
   }
 });
 
-User.belongsTo(Transacao, {
-  foreignKey: 'id'
-});
-User.belongsTo(Registro, {
-  foreignKey: 'id'
-});
+// User.hasMany(Transacao);
+
 
 //User.sync({force:true});
 User.sync();

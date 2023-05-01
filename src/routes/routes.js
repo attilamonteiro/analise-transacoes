@@ -38,9 +38,19 @@ module.exports = (app) => {
     // Define a rota para processar a exclusão de usuário
     app.post("/user/delete/:id", validateToken, UserController.deleteUser);
 
+    //app.get("/detalhe-transacao/:id", validateToken, FileController.showRegisterDetails);
+    app.get("/detalhe-transacao/:id", validateToken, FileController.showRegisterDetails, (req, res) => {
+      const { listaTransacao, listaRegistro } = req;
+      res.render("transacoes-importacao", { listaTransacao, listaRegistro });
+    });
+    
+
     app.post('/login', AuthController.login);
     app.get('/logout', AuthController.logout);
-
+    // app.get("/detalhe-transacao/:id", (req, res) => {
+      //const { listaTransacao, listaRegistro } = req.detalhes;
+    //   res.render('transacoes-importacao', { listaTransacao, listaRegistro });
+    // });
   };
 
 const validateToken = async (req, res, next) => {

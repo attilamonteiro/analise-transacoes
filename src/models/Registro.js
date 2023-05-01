@@ -15,10 +15,14 @@ const Registro = sequelize.define("registro", {
   },
   filePath: {
     type: DataTypes.STRING
+  },
+  userId: {
+    type: DataTypes.STRING
+
   }
 });
 
 
-//Registro.sync({force:true});
-Registro.sync();
+Registro.sync({force:true});
+//Registro.sync();
 module.exports = Registro;

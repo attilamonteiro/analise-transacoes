@@ -2,6 +2,9 @@ const fs = require("fs");
 const csv = require("csv-parse");
 const Registro = require("../models/Registro");
 const Transacao = require("../models/Transacao");
+const User = require("../models/User")
+
+const jwt = require("jsonwebtoken");
 
 exports.sendIndex = async (req, res) => {
   res.render("index");
@@ -16,9 +19,14 @@ exports.sendFile = async (req, res) => {
   console.log(req.file); // primeira tarefa
 
   const filePath = req.file.path;
-  console.log(filePath, typeof(filePath))
+  console.log(filePath, typeof filePath);
   var results = [];
+  const token = req.cookies.token;
+  const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+  const userId = decodedToken.id;
 
+  // Consulta o usuário pelo ID
+  const user = await User.findByPk(userId);
   fs.createReadStream(filePath)
     .pipe(csv())
     .on("data", (data) => {
@@ -35,23 +43,24 @@ exports.sendFile = async (req, res) => {
         vTransacao: data[6],
         dataHoraTransacao: data[7],
         filePath: filePath,
+        userId: userId
       };
 
       results.push(transacao);
     })
     .on("end", () => {
+      const token = req.cookies.token;
+      const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+      const userId = decodedToken.id;
       // cria data/hora que a importação foi realizada e data das transações dessa importação.
       var registro = new Registro({
         dataTransacao: results[0].dataHoraTransacao,
         dataImportacao: new Date().toISOString(),
         filePath: filePath,
+        userId: userId
       });
 
-      // verifica se a data da transação ja existe no banco (tarefa 4)
-      // const registroExiste = Registro.findAll({'dataHoraTransacao' : results[0].dataHoraTransacao}) || false 
-      // if (registroExiste) {
-      //   throw new Error('Esta data ja existe no banco')
-      // }
+      
 
       // gravar cada transação em banco de dados.
       const dataPrimeiraTransacao = new Date(
@@ -77,3 +86,32 @@ exports.sendFile = async (req, res) => {
       res.send("Ocorreu um erro desconhecido no upload.");
     });
 };
+
+exports.showRegisterDetails = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const listaTransacao = await Transacao.findAll({
+      where: {
+        id: req.params.id,
+      },
+    });
+
+    const listaRegistro = await Registro.findAll({
+      where: {
+        id: req.params.id,
+      },
+    });
+
+    // const detalhes = {
+    //   transacao: listaTransacao,
+    //   registro: listaRegistro,
+    // };
+    res.render('transacoes-importacao', { listaTransacao, listaRegistro });
+
+  } catch (error) {
+    console.log(error.message, error.stack);
+  }
+};
+    
+    

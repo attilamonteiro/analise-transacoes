@@ -1,6 +1,6 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/db");
-
+// const User = require("./User");
 
 const Transacao = sequelize.define("transacao", {
   id: {
@@ -35,11 +35,21 @@ const Transacao = sequelize.define("transacao", {
   filePath: {
     type: DataTypes.STRING
   },
+  userId: {
+    type: DataTypes.STRING
+
+  }
 
 });
 
+// Transacao.belongsTo(Transacao, {
+//   foreignKey: 'id'
+// });
+// User.belongsTo(Registro, {
+//   foreignKey: 'id'
+// });
 
-
+// Transacao.belongsTo(User);
 
 //Transacao.sync({force: true});
 Transacao.sync();

@@ -63,6 +63,7 @@
           <tr>
             <th scope="col">Data da Transacao</th>
             <th scope="col">Data da Importacao</th>
+            <th scope="col">Opções</th>
           </tr>
         </thead>
         <tbody id="tableData">
@@ -80,10 +81,12 @@
       
       // Inverte a ordem dos registros e insere cada um deles na tabela
       data.reverse().forEach(element => {
+        console.log(element)
         document.getElementById('tableData').innerHTML += `
         <tr>
             <td>${new Date(element.dataTransacao).toLocaleDateString()}</td>
             <td>${new Date(element.dataImportacao).toLocaleDateString()} - ${new Date(element.dataImportacao).toLocaleTimeString()}</td>
+            <td> <a href=/detalhe-transacao/${element.id} class="btn btn-primary">Detalhar</a>    </td>
           </tr>
         `   
       });

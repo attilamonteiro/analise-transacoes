@@ -1,31 +1,82 @@
-<!-- transacoes-importacao.ejs -->
-
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Transações de Importação</title>
-  </head>
-  <body>
-    <h1>Transações de Importação</h1>
-    <table>
-      <thead>
+<head>
+  <meta charset="utf-8">
+
+  
+  <title>Lista de Transações e Registros</title>
+  
+</head>
+
+<h1>DETALHE DA IMORTAÇÃO</h1>
+<table>
+  <thead>
+    <tr>
+      <th>Importado em</th>
+      <th>Importado por</th>
+      <th>Data transações</th>
+
+    </tr>
+  </thead>
+  <tbody>
+    <% listaRegistro.forEach((registro) => { %>
+      <tr>
+        <td><%= registro.dataImportacao %></td>
+        <td><%= registro.userId %></td>
+        <td><%= registro.dataTransacao %></td>
+
+      </tr>
+    <% }); %>
+  </tbody>
+</table>
+
+<body>
+  <h1>Lista de Transações</h1>
+  <table>
+    <thead>
+      <tr>
+        <h2>Origem</h2>
+        <table>
+
+        <th>Banco de Origem</th>
+        <th>Agência de Origem</th>
+        <th>Conta de Origem</th>
+        <tbody>
+          <% listaTransacao.forEach((transacao) => { %>
+            <tr>
+              <td><%= transacao.bOrigem %></td>
+              <td><%= transacao.aOrigem %></td>
+              <td><%= transacao.cOrigem %></td>
+
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
+
+        <table>
+
+        <h2>Destino</h2>
+        <th>Banco de Destino</th>
+        <th>Agência de Destino</th>
+        <th>Conta de Destino</th>
+        <th>Valor da Transação</th>
+
+
+      </tr>
+    </thead>
+    <tbody>
+      <% listaTransacao.forEach((transacao) => { %>
         <tr>
-          <th>Data</th>
-          <th>Usuário</th>
-          <th>Valor</th>
-          <th>Descrição</th>
+ 
+          <td><%= transacao.bDestino %></td>
+          <td><%= transacao.aDestino %></td>
+          <td><%= transacao.cDestino %></td>
+          <td><%= transacao.vTransacao %></td>
+        </table>
         </tr>
-      </thead>
-      <tbody>
-        <% transacoes.forEach(function(transacao) { %>
-          <tr>
-            <td><%= transacao.createdAt %></td>
-            <td><%= transacao.user.name %></td>
-            <td><%= transacao.valor %></td>
-            <td><%= transacao.descricao %></td>
-          </tr>
-        <% }); %>
-      </tbody>
-    </table>
-  </body>
+      <% }); %>
+    </tbody>
+  </table>
+
+</body>
 </html>
