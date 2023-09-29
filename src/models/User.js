@@ -25,10 +25,11 @@ const User = sequelize.define("user", {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  status:{
+  status: {
     type: DataTypes.INTEGER,
-    allowNull: true,
-  }
+    allowNull: false,
+    defaultValue: 1, // definido como 1 por padrão (usuário ativo)
+  },
 });
 
 // User.hasMany(Transacao);

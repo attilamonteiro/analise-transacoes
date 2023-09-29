@@ -113,5 +113,22 @@ exports.showRegisterDetails = async (req, res) => {
     console.log(error.message, error.stack);
   }
 };
-    
-    
+
+
+exports.getAnaliseTransacoes = async (req, res) => {
+  res.render("analise-transacoes");
+};
+
+exports.analisarTransacoes = async (req, res) => {
+  const { dataHoraTransacao} = req.body;
+
+  // Realiza a análise das transações do mês/ano informado
+  // Código para análise das transações aqui
+
+  // Exibe as tabelas de transações, contas e agências suspeitas após a análise
+  res.render("resultado-analise", { Transacao, contasSuspeitas, agenciasSuspeitas });
+  console.log(Transacao)
+};
+
+
+//showAllTransactions

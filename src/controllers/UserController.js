@@ -161,19 +161,24 @@ exports.deleteUser = async (req, res) => {
   if (parseInt(id) === req.user?.id) {
     res.status(400).send({ error: 'Você não pode excluir a si mesmo.' });
   } else {
-    const deletedRowsCount = await User.destroy({
-      where: {
-        id,
-        email: {
-          [Op.ne]: 'admin@email.com.br'
-        }
-      }
-    });
-
-    if (deletedRowsCount === 0) {
-      res.status(404).send({ error: 'Usuário não encontrado ou não pode ser excluído.' });
+    const user = await User.findOne({ where: { id } });
+    if (!user) {
+      res.status(404).send({ error: 'Usuário não encontrado.' });
+    } else if (user.status === 0) {
+      res.status(400).send({ error: 'Usuário já está desativado.' });
+    } else if (user.email === 'admin@email.com.br') {
+      res.status(400).send({ error: 'O usuário administrador não pode ser desativado.' });
     } else {
-      res.send({ message: 'Usuário excluído com sucesso.' });
+      user.status = 0;
+      await user.save();
+      res.send({ message: 'Usuário desativado com sucesso.' });
     }
   }
 };
+//Agora ao chamar a função deleteUser, o usuário será desativado ao invés de ser excluído do banco de dados. O status do usuário será atualizado para "0" indicando que o usuário está inativo.
+
+
+
+
+
+

@@ -1,7 +1,7 @@
 // Importa o controlador do arquivo
 const FileController = require("../controllers/FileController");
 const UserController = require("../controllers/UserController");
-
+const User = require("../models/User")
 const jwt = require('jsonwebtoken');
 
 // Importa a configuração do multer
@@ -38,6 +38,9 @@ module.exports = (app) => {
     // Define a rota para processar a exclusão de usuário
     app.post("/user/delete/:id", validateToken, UserController.deleteUser);
 
+    app.get("/analise-transacoes", validateToken, FileController.getAnaliseTransacoes);
+
+
     //app.get("/detalhe-transacao/:id", validateToken, FileController.showRegisterDetails);
     app.get("/detalhe-transacao/:id", validateToken, FileController.showRegisterDetails, (req, res) => {
       const { listaTransacao, listaRegistro } = req;
@@ -51,16 +54,33 @@ module.exports = (app) => {
       //const { listaTransacao, listaRegistro } = req.detalhes;
     //   res.render('transacoes-importacao', { listaTransacao, listaRegistro });
     // });
+
+    app.get('/analise-transacoes', (req, res) => {
+      res.render('analise-transacoes'); // renderiza a tela de análise de transações
+    });
+    const TransacaoController = require('../controllers/TransacaoController');
+
+    app.post('/analise-transacoes', TransacaoController.analisaTransacoes);
+
+
+
   };
 
-const validateToken = async (req, res, next) => {
-  // Verifique se o token de login é válido
-  const token = req.cookies.token;
-  if (!token) return res.render('login')
-
-  if ( !jwt.verify(token, process.env.JWT_SECRET)) {
-    res.status(401).send({ error: 'Não autorizado' });
-    return;
-  }
-  next()
-}
+  const validateToken = async (req, res, next) => {
+    // Verifique se o token de login é válido
+    const token = req.cookies.token;
+    if (!token) return res.render('login');
+  
+    try {
+      const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+      const user = await User.findByPk(decodedToken.id);
+      if (!user || user.status === 0) {
+        return res.render('login');
+      }
+      next();
+    } catch (error) {
+      res.status(401).send({ error: 'Não autorizado' });
+      return;
+    }
+  };
+  
