@@ -1,113 +1,88 @@
-<!-- Cabeçalho da página -->
 <!DOCTYPE html>
-
-<html>
-  <head>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Minha aplicação EJS</title>
-    
+
     <!-- Link para o CSS do Bootstrap -->
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-      integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD"
-      crossorigin="anonymous"
-    />
-    <!-- Link para o JavaScript do Bootstrap -->
-    <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
-      integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
-      crossorigin="anonymous"
-    ></script>
-  </head>
-  <body>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+
+</head>
+<body>
+
     <!-- Barra de menu -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-      <div class="container-fluid">
-        <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li class="nav-item">
-              <a class="nav-link" href="home">IMPORTAÇÕES</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="cadastro">CADASTRAR USUÁRIOS</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="user">USUÁRIOS</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="logout">SAIR</a>
-            </li>
-        </div>
-      </div>
-    </nav>
-  <body>
+<!-- Importa a barra de menu -->
+<%- include('components/navbar') %>
+
     <div class="container-fluid">
 
-    <!-- Seção para importar transações -->
-    <div class="importar">
-      <div class="title">
-        <h2>Importar Transações</h2>
-      </div>
-      <hr>
-      <!-- Formulário para enviar o arquivo de transações -->
-      <form action="./uploadFile" method="POST" enctype="multipart/form-data">
-        <input type="file" name="file" accept="text/csv" />
-        <input type="submit" value="upload" />
-      </form>
+        <!-- Seção para importar transações -->
+        <div class="importar">
+            <div class="title">
+                <h2>Importar Transações</h2>
+            </div>
+            <hr>
+            <!-- Formulário para enviar o arquivo de transações -->
+            <form action="./uploadFile" method="POST" enctype="multipart/form-data">
+                <input type="file" name="file" accept="text/csv" />
+                <input type="submit" value="upload" />
+            </form>
+        </div>
+        <hr>
+
+        <!-- Seção para exibir as importações realizadas -->
+        <div id="transacoes">
+            <div class="title">
+                <h2>Importações Realizadas</h2>
+            </div>
+            <hr>
+
+            <!-- Tabela para exibir as importações realizadas -->
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Data da Transacao</th>
+                        <th scope="col">Data da Importacao</th>
+                        <th scope="col">Opções</th>
+                    </tr>
+                </thead>
+                <tbody id="tableData">
+                    <!-- Os dados serão adicionados dinamicamente aqui -->
+                </tbody>
+            </table>
+        </div>
+
     </div>
-    <hr>
 
-    <!-- Seção para exibir as importações realizadas -->
-    <div id="transacoes">
-      <div class="title">
-        <h2>Importações Realizadas</h2>
-      </div>
-      <hr>
+    <!-- Link para o JavaScript do Bootstrap -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3/kSDdN49yfL42c5rH/p5b0m9jW87ztvJLQ2t" crossorigin="anonymous"></script>
 
-      <!-- Tabela para exibir as importações realizadas -->
-      <table class="table">
-        <thead>
-          <tr>
-            <th scope="col">Data da Transacao</th>
-            <th scope="col">Data da Importacao</th>
-            <th scope="col">Opções</th>
-          </tr>
-        </thead>
-        <tbody id="tableData">
-        </tbody>
-      </table>
-    </div>
-  </body>
-      <!-- Link para o JavaScript do Bootstrap -->
-      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
-      integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3/kSDdN49yfL42c5rH/p5b0m9jW87ztvJLQ2t"
-      crossorigin="anonymous"></script>
-  </body>
-  <!-- Link para o JavaScript do Axios -->
-  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-  <script>
-    // Função assíncrona para obter os registros de importações realizadas
-    const getRegistros = async () => {
-      // Realiza uma requisição GET para a rota '/registros'
-      const { data } = await axios.get('/registros');
-      
-      // Inverte a ordem dos registros e insere cada um deles na tabela
-      data.reverse().forEach(element => {
-        console.log(element)
-        document.getElementById('tableData').innerHTML += `
-        <tr>
-            <td>${new Date(element.dataTransacao).toLocaleDateString()}</td>
-            <td>${new Date(element.dataImportacao).toLocaleDateString()} - ${new Date(element.dataImportacao).toLocaleTimeString()}</td>
-            <td> <a href=/detalhe-transacao/${element.id} class="btn btn-primary">Detalhar</a>    </td>
-          </tr>
-        `   
-      });
-    };
-    // Chama a função getRegistros para exibir as importações realizadas na tabela
-    getRegistros()
-  </script>
+    <!-- Link para o JavaScript do Axios -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    
+    <script>
+        // Função assíncrona para obter os registros de importações realizadas
+        const getRegistrosHtml = async () => {
+            // Realiza uma requisição GET para a rota '/registros'
+            const { data } = await axios.get('/registros');
 
-  </body>
-</div class="container-fluid">
+            // Inverte a ordem dos registros e insere cada um deles na tabela
+            data.reverse().forEach(element => {
+                console.log(element);
+                document.getElementById('tableData').innerHTML += `
+                    <tr>
+                        <td>${new Date(element.dataTransacao).toLocaleDateString()}</td>
+                        <td>${new Date(element.dataImportacao).toLocaleDateString()} - ${new Date(element.dataImportacao).toLocaleTimeString()}</td>
+                        <td> <a href=/detalhe-transacao/${element.id} class="btn btn-primary">Detalhar</a>    </td>
+                    </tr>
+                `;
+            });
+        };
+        // Chama a função getRegistros para exibir as importações realizadas na tabela
+        getRegistrosHtml();
+    </script>
 
+</body>
 </html>
